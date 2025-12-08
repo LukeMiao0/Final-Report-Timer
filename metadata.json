@@ -1,0 +1,5 @@
+{
+  "name": "Class Presentation Timer",
+  "description": "A specialized timer and group manager for 15-minute academic presentations with phases for Talk, Q&A, and Peer Assessment.",
+  "requestFramePermissions": []
+}
