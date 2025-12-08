@@ -3,6 +3,7 @@ export interface Group {
   name: string;
   status: 'pending' | 'active' | 'completed';
   note?: string;
+  totalSeconds?: number;
 }
 
 export enum TimerPhase {
@@ -43,6 +44,6 @@ export const PHASE_CONFIG = {
     color: 'text-rose-600',
     bgColor: 'bg-rose-50',
     barColor: 'bg-rose-500',
-    message: 'Please conclude'
+    message: 'Group Completed'
   }
 };
