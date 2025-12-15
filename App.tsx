@@ -2,15 +2,54 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { 
   Play, Pause, RotateCcw, Shuffle, Users, 
   ChevronUp, ChevronDown, Settings, ExternalLink,
-  MoreVertical, CheckCircle2, Circle, SkipForward, Clock
+  MoreVertical, CheckCircle2, Circle, SkipForward, Clock, QrCode
 } from 'lucide-react';
 import { TimerDisplay } from './components/TimerDisplay';
 import { Group, TimerPhase, PHASE_CONFIG } from './types';
 import { playSound } from './utils/sound';
 
 // Initial Setup
-const INITIAL_GROUPS_BATCH_1 = Array.from({ length: 10 }, (_, i) => ({ id: `b1-g${i + 1}`, name: `Group ${i + 1}`, status: 'pending' as const }));
-const INITIAL_GROUPS_BATCH_2 = Array.from({ length: 10 }, (_, i) => ({ id: `b2-g${i + 1}`, name: `Group ${i + 11}`, status: 'pending' as const }));
+const INITIAL_GROUPS_BATCH_1 = Array.from({ length: 12 }, (_, i) => {
+  // Week 15 Data (G1-G7 defined, others placeholder)
+  const definedGroups = [
+    "G1: 1103565 Eric; 1113540 Kassie",
+    "G2: 1113537 Yada(馮夢瑩); 1113538 Angelica(欣于姬)",
+    "G3: 1113526 Sunny; 1113530 Kamila",
+    "G4: 1113507 Johnny; 1113514 Steven; 1113518 Joey",
+    "G5: 1113568 蔡函伃; 1113570 今井駿平",
+    "G6: 1113523",
+    "G7: 1123546 Maji"
+  ];
+  return { 
+    id: `b1-g${i + 1}`, 
+    name: definedGroups[i] || `Group ${i + 1}`, 
+    status: 'pending' as const 
+  };
+});
+
+const INITIAL_GROUPS_BATCH_2 = Array.from({ length: 13 }, (_, i) => {
+  // Week 16 Data (G11-G23)
+  const definedGroups = [
+    "G11: 1113524 Amane; 1113505 Elaine",
+    "G12: 1113548 Arridson; 1113552 Zithile",
+    "G13: 1113534; 1113535",
+    "G14: 1103564 Amy; 1113539 Iwa",
+    "G15 (Color Cloud): 1113541 Luke; 1103561 Jakid",
+    "G16: 1113521 Ian; 1113559 Sean; 1113560 Alan",
+    "G17: 1113556 蔡宗修",
+    "G18: 1103535 Aaron; 1111665 Suzu; 1113531 Bema",
+    "G19: 1113517 Tina; 1113536 Ink",
+    "G20: 1113506 Bert",
+    "G21: 1113551",
+    "G22: 1113532 Perizat; 1113527 Adina",
+    "G23: 1113542 Ferran; 1113543 Nolan; 1113545 Travis"
+  ];
+  return { 
+    id: `b2-g${i + 1}`, 
+    name: definedGroups[i] || `Group ${i + 11}`, 
+    status: 'pending' as const 
+  };
+});
 
 const formatTimeShort = (seconds: number) => {
   const m = Math.floor(seconds / 60);
@@ -29,7 +68,7 @@ export default function App() {
   const [seconds, setSeconds] = useState(0); // This controls phase logic (0-840)
   const [elapsedActiveTime, setElapsedActiveTime] = useState(0); // This tracks ACTUAL time spent
   const [isRunning, setIsRunning] = useState(false);
-  const [formLink, setFormLink] = useState<string>('');
+  const [formLink, setFormLink] = useState<string>('https://docs.google.com/forms/d/e/1FAIpQLScZULrqaMMA7-NTZG2CDOeDoSZ0K-nsCPzOtyEMI0o3g3-2_g/viewform?usp=dialog');
   const [showSettings, setShowSettings] = useState(false);
 
   // Computed
@@ -212,7 +251,7 @@ export default function App() {
             <Users className="w-6 h-6 text-indigo-600" />
             Class Presentation
           </h1>
-          <p className="text-xs text-slate-500 mt-1">43 Students • 20 Groups</p>
+          <p className="text-xs text-slate-500 mt-1">43 Students • 24 Groups</p>
         </div>
 
         {/* Batch Toggle */}
@@ -221,13 +260,13 @@ export default function App() {
             onClick={() => { setBatch(1); setIsRunning(false); setActiveGroupId(null); setSeconds(0); }}
             className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${batch === 1 ? 'bg-white text-indigo-600 shadow-sm ring-1 ring-slate-200' : 'text-slate-500 hover:bg-slate-100'}`}
           >
-            Week 1 (Gr 1-10)
+            Week 15
           </button>
           <button 
             onClick={() => { setBatch(2); setIsRunning(false); setActiveGroupId(null); setSeconds(0); }}
             className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${batch === 2 ? 'bg-white text-indigo-600 shadow-sm ring-1 ring-slate-200' : 'text-slate-500 hover:bg-slate-100'}`}
           >
-            Week 2 (Gr 11-20)
+            Week 16
           </button>
         </div>
 
@@ -335,7 +374,7 @@ export default function App() {
       </aside>
 
       {/* Main Content: Timer */}
-      <main className="flex-1 flex flex-col relative overflow-hidden">
+      <main className="flex-1 flex flex-col relative overflow-hidden bg-slate-50">
         {/* Background Gradients based on phase */}
         <div className={`absolute inset-0 transition-colors duration-1000 opacity-30 pointer-events-none
           ${currentPhase === TimerPhase.PRESENTATION ? 'bg-gradient-to-br from-emerald-100 to-slate-100' : ''}
@@ -345,23 +384,23 @@ export default function App() {
         `}></div>
 
         {/* Current Active Header */}
-        <div className="relative z-10 pt-12 pb-4 text-center">
+        <div className="relative z-10 pt-10 pb-2 text-center flex-shrink-0">
             {activeGroupId ? (
                 <div>
                     <h2 className="text-sm font-medium text-slate-500 uppercase tracking-widest mb-2">Current Group</h2>
-                    <h1 className="text-4xl md:text-5xl font-bold text-slate-900">
+                    <h1 className="text-3xl md:text-5xl font-bold text-slate-900 truncate px-8">
                         {currentGroups.find(g => g.id === activeGroupId)?.name}
                     </h1>
                 </div>
             ) : (
-                <div className="h-24 flex items-center justify-center">
+                <div className="h-20 flex items-center justify-center">
                     <p className="text-slate-400 text-lg">Select a group to start</p>
                 </div>
             )}
         </div>
 
         {/* Big Timer */}
-        <div className="flex-1 flex items-center justify-center relative z-10 min-h-[400px]">
+        <div className="flex-1 flex items-center justify-center relative z-10 min-h-[250px] transition-all duration-500">
             <TimerDisplay 
                 seconds={seconds} 
                 totalDuration={840} 
@@ -370,26 +409,50 @@ export default function App() {
             />
         </div>
 
-        {/* Contextual Actions (Google Form) */}
-        <div className="h-32 flex items-start justify-center relative z-10 px-4">
+        {/* Contextual Actions (Google Form & QR) */}
+        <div className="flex-shrink-0 relative z-10 px-4 mb-4 flex justify-center">
             {(currentPhase === TimerPhase.ASSESSMENT || currentPhase === TimerPhase.FINISHED) && (
-                <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 w-full max-w-2xl">
                     {formLink ? (
-                        <a 
-                            href={formLink} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-3 bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-xl shadow-lg shadow-indigo-200 transition-all transform hover:scale-105 font-semibold text-lg"
-                        >
-                            <span>Open Peer Assessment Form</span>
-                            <ExternalLink className="w-5 h-5" />
-                        </a>
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 bg-white/60 backdrop-blur-md p-4 rounded-2xl border border-white/50 shadow-xl mx-auto">
+                            {/* QR Code */}
+                            <div className="bg-white p-2 rounded-xl shadow-sm flex-shrink-0">
+                                <img 
+                                    src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(formLink)}`}
+                                    alt="Scan to Assess"
+                                    className="w-24 h-24 md:w-32 md:h-32 object-contain"
+                                />
+                            </div>
+                            
+                            {/* Text & Button */}
+                            <div className="flex flex-col items-center sm:items-start gap-2 text-center sm:text-left">
+                                <div>
+                                    <h3 className="text-lg font-bold text-slate-800">Peer Assessment</h3>
+                                    <p className="text-slate-600 text-xs md:text-sm">Scan QR code or click button</p>
+                                </div>
+                                <a 
+                                    href={formLink} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 font-medium text-sm"
+                                >
+                                    <span>Open Form</span>
+                                    <ExternalLink className="w-4 h-4" />
+                                </a>
+                            </div>
+                        </div>
                     ) : (
                         <button 
                             onClick={() => setShowSettings(true)}
-                            className="text-indigo-600 underline underline-offset-4 hover:text-indigo-800"
+                            className="w-full flex items-center justify-center gap-3 text-indigo-600 hover:text-indigo-800 bg-white/50 hover:bg-indigo-50 px-6 py-4 rounded-xl border-2 border-dashed border-indigo-300 hover:border-indigo-500 transition-all group"
                         >
-                            Set Google Form URL in Settings
+                            <div className="p-2 bg-indigo-100 rounded-full group-hover:bg-indigo-200 transition-colors">
+                                <QrCode className="w-6 h-6" />
+                            </div>
+                            <div className="text-left">
+                                <span className="block font-bold">Setup Peer Assessment Link</span>
+                                <span className="block text-xs text-indigo-500">Add URL in settings to generate QR code automatically</span>
+                            </div>
                         </button>
                     )}
                 </div>
@@ -397,21 +460,21 @@ export default function App() {
         </div>
 
         {/* Footer Controls */}
-        <div className="relative z-20 bg-white border-t border-slate-200 p-6 flex items-center justify-center gap-6 shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.1)]">
+        <div className="relative z-20 bg-white border-t border-slate-200 p-4 md:p-6 flex items-center justify-center gap-4 md:gap-6 shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.1)] flex-shrink-0">
             <button 
                 onClick={handleReset}
                 disabled={isCurrentGroupCompleted}
-                className="flex items-center gap-2 px-6 py-3 rounded-full font-medium text-slate-600 hover:bg-slate-100 transition-colors disabled:opacity-50"
+                className="flex items-center gap-2 px-4 md:px-6 py-3 rounded-full font-medium text-slate-600 hover:bg-slate-100 transition-colors disabled:opacity-50 text-sm md:text-base"
             >
-                <RotateCcw className="w-5 h-5" />
-                Reset
+                <RotateCcw className="w-4 h-4 md:w-5 md:h-5" />
+                <span className="hidden md:inline">Reset</span>
             </button>
 
             <button 
                 onClick={toggleTimer}
                 disabled={!activeGroupId || isCurrentGroupCompleted}
                 className={`
-                    flex items-center gap-3 px-10 py-4 rounded-full font-bold text-lg shadow-lg transition-all transform hover:scale-105 active:scale-95
+                    flex items-center gap-3 px-8 md:px-10 py-3 md:py-4 rounded-full font-bold text-lg shadow-lg transition-all transform hover:scale-105 active:scale-95
                     ${isRunning 
                         ? 'bg-amber-100 text-amber-700 hover:bg-amber-200' 
                         : 'bg-slate-900 text-white hover:bg-slate-800 disabled:bg-slate-300 disabled:cursor-not-allowed disabled:transform-none'}
@@ -419,13 +482,13 @@ export default function App() {
             >
                 {isRunning ? (
                     <>
-                        <Pause className="w-6 h-6 fill-current" />
-                        Pause
+                        <Pause className="w-5 h-5 md:w-6 md:h-6 fill-current" />
+                        <span className="hidden md:inline">Pause</span>
                     </>
                 ) : (
                     <>
-                        <Play className="w-6 h-6 fill-current" />
-                        {seconds > 0 ? 'Resume' : 'Start Timer'}
+                        <Play className="w-5 h-5 md:w-6 md:h-6 fill-current" />
+                        <span>{seconds > 0 ? 'Resume' : 'Start'}</span>
                     </>
                 )}
             </button>
@@ -433,10 +496,11 @@ export default function App() {
             <button 
                 onClick={handleNextPhase}
                 disabled={!activeGroupId || currentPhase === TimerPhase.FINISHED || isCurrentGroupCompleted}
-                className="flex items-center gap-2 px-6 py-3 rounded-full font-medium text-slate-600 hover:bg-slate-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 px-4 md:px-6 py-3 rounded-full font-medium text-slate-600 hover:bg-slate-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
             >
-                <span>{currentPhase === TimerPhase.ASSESSMENT ? 'Finish' : 'Next Phase'}</span>
-                <SkipForward className="w-5 h-5" />
+                <span className="hidden md:inline">{currentPhase === TimerPhase.ASSESSMENT ? 'Finish' : 'Next Phase'}</span>
+                <span className="md:hidden">{currentPhase === TimerPhase.ASSESSMENT ? 'Finish' : 'Next'}</span>
+                <SkipForward className="w-4 h-4 md:w-5 md:h-5" />
             </button>
         </div>
       </main>
