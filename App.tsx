@@ -27,7 +27,7 @@ const INITIAL_GROUPS_BATCH_1 = Array.from({ length: 12 }, (_, i) => {
   };
 });
 
-const INITIAL_GROUPS_BATCH_2 = Array.from({ length: 13 }, (_, i) => {
+const INITIAL_GROUPS_BATCH_2 = Array.from({ length: 14 }, (_, i) => {
   // Week 16 Data (G11-G23) G7 moved over from week 15.
   const definedGroups = [
     "G7: 1123546 Maji",
