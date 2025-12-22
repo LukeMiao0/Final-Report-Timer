@@ -18,7 +18,7 @@ const INITIAL_GROUPS_BATCH_1 = Array.from({ length: 12 }, (_, i) => {
     "G4: 1113507 Johnny; 1113514 Steven; 1113518 Joey",
     "G5: 1113568 蔡函伃; 1113570 今井駿平",
     "G6: 1113523",
-    "G7: 1123546 Maji"
+  //  "G7: 1123546 Maji"
   ];
   return { 
     id: `b1-g${i + 1}`, 
@@ -28,13 +28,14 @@ const INITIAL_GROUPS_BATCH_1 = Array.from({ length: 12 }, (_, i) => {
 });
 
 const INITIAL_GROUPS_BATCH_2 = Array.from({ length: 13 }, (_, i) => {
-  // Week 16 Data (G11-G23)
+  // Week 16 Data (G11-G23) G7 moved over from week 15.
   const definedGroups = [
+    "G7: 1123546 Maji",
     "G11: 1113524 Amane; 1113505 Elaine",
     "G12: 1113548 Arridson; 1113552 Zithile",
     "G13: 1113534; 1113535",
     "G14: 1103564 Amy; 1113539 Iwa",
-    "G15 (Color Cloud): 1113541 Luke; 1103561 Jakid",
+    "G15: 1113541 Luke; 1103561 Jakid",
     "G16: 1113521 Ian; 1113559 Sean; 1113560 Alan",
     "G17: 1113556 蔡宗修",
     "G18: 1103535 Aaron; 1111665 Suzu; 1113531 Bema",
